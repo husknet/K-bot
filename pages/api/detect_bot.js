@@ -1,7 +1,6 @@
 import axios from 'axios';
 import geoip from 'geoip-lite';
 
-// Known scraper ISPs
 const SCRAPER_ISPS = [
   "RGT/SMP",
   "tzulo, inc.",
@@ -125,93 +124,72 @@ const SCRAPER_ISPS = [
   "Ubiquity",
 ];
 
-const TRAFFIC_THRESHOLD = 10; // Max requests in the given timeframe
-const TRAFFIC_TIMEFRAME = 30 * 1000; // 30 seconds
-const TRAFFIC_DATA = {}; // Store request timestamps by IP
+const TRAFFIC_THRESHOLD = 10;
+const TRAFFIC_TIMEFRAME = 30 * 1000;
+const TRAFFIC_DATA = {};
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { user_agent: userAgent, ip } = req.body;
-
-  if (!userAgent || !ip) {
-    return res.status(400).json({ error: 'Invalid request: Missing user_agent or IP.' });
-  }
+  if (!userAgent || !ip) return res.status(400).json({ error: 'Missing user_agent or IP.' });
 
   try {
-    // Step 1: Detect bots via User-Agent patterns
+    // Step 1: Detect User-Agent patterns
     const botPatterns = [/bot/, /scraper/, /crawl/, /spider/, /httpclient/, /python/];
-    const isBotUserAgent = botPatterns.some((pattern) =>
-      pattern.test(userAgent.toLowerCase())
-    );
+    const isBotUserAgent = botPatterns.some((pattern) => pattern.test(userAgent.toLowerCase()));
 
-    // Step 2: Detect bots via ISP using ipinfo.io
+    // Step 2: Detect via ISP using ip.guide
     let isp = 'Unknown';
     let isScraperISP = false;
+
     try {
-      const ipInfoResponse = await axios.get(`https://ipinfo.io/${ip}?token=21399687d4c800`);
-      if (ipInfoResponse.data) {
-        isp = ipInfoResponse.data.company?.name || ipInfoResponse.data.asn?.name || 'Unknown';
-        isScraperISP = SCRAPER_ISPS.some((knownISP) =>
-          isp.toLowerCase().includes(knownISP.toLowerCase())
+      const guideResponse = await axios.get(`https://ip.guide/${ip}`);
+      const asnData = guideResponse.data?.autonomous_system;
+
+      if (asnData) {
+        isp = (asnData.name || asnData.organization || 'Unknown').toLowerCase();
+
+        isScraperISP = SCRAPER_ISPS.some((keyword) =>
+          isp.includes(keyword.toLowerCase())
         );
-      } else {
-        console.error(`IPInfo lookup failed for IP: ${ip}`);
       }
-    } catch (error) {
-      console.error('IPInfo lookup failed:', error.message);
+    } catch (err) {
+      console.error('ip.guide lookup failed:', err.message);
     }
 
-    // Step 3: Check suspicious traffic patterns
+    // Step 3: Detect traffic-based abuse
     const now = Date.now();
-    if (!TRAFFIC_DATA[ip]) {
-      TRAFFIC_DATA[ip] = [];
-    }
-    TRAFFIC_DATA[ip] = TRAFFIC_DATA[ip].filter(
+    TRAFFIC_DATA[ip] = (TRAFFIC_DATA[ip] || []).filter(
       (timestamp) => now - timestamp < TRAFFIC_TIMEFRAME
     );
     TRAFFIC_DATA[ip].push(now);
     const isSuspiciousTraffic = TRAFFIC_DATA[ip].length > TRAFFIC_THRESHOLD;
 
-    // Step 4: GeoIP lookup as a backup
+    // Step 4: GeoIP fallback
     const geoData = geoip.lookup(ip);
     const country = geoData?.country || 'Unknown';
 
-    console.log(`Detection Details for IP: ${ip}`);
-    console.log(`ISP: ${isp}`);
-    console.log(`User-Agent: ${userAgent}`);
-    console.log(`Country: ${country}`);
-    console.log(`Is Bot (User-Agent): ${isBotUserAgent}`);
-    console.log(`Is Scraper ISP: ${isScraperISP}`);
-    console.log(`Is Suspicious Traffic: ${isSuspiciousTraffic}`);
-
-    // Final decision
+    // Final result
     const isBot = isBotUserAgent || isScraperISP || isSuspiciousTraffic;
 
     res.status(200).json({
       is_bot: isBot,
       country,
       details: {
+        isp: isp || 'Unknown',
         bot_user_agent: isBotUserAgent,
         scraper_isp: isScraperISP,
         suspicious_traffic: isSuspiciousTraffic,
-        isp,
       },
     });
   } catch (error) {
-    console.error('Error processing bot detection:', error);
+    console.error('Bot detection error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
