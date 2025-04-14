@@ -2,132 +2,128 @@ import axios from 'axios';
 import geoip from 'geoip-lite';
 
 const SCRAPER_ISPS = [
-  // same as your original list (truncated here for brevity)
-  "RGT/SMP",
-  "tzulo, inc.",
-  "Cyber Assets FZCO",
-  "Falco Networks B.V.",
-  "PJSC Rostelecom",
-  "Gtd Internet S.A.",
-  "Meta Networks Inc",
-  "PRIVATE LAYER INC",
-  "Bucklog SARL",
-  "FBW Reseaux Fibres inc.",
-  "OpenVPN",
-  "Huawei Cloud Hongkong Region",
-  "Excitel Broadband Pvt Ltd",
-  "VPN Consumer Frankfurt, Germany",
-  "M Nets SAL",
-  "HostRoyale Technologies Pvt Ltd",
-  "The Constant Company, LLC",
+  "rgt/smp",
+  "tzulo inc",
+  "cyber assets fzco",
+  "falco networks b.v.",
+  "pjsc rostelecom",
+  "gtd internet s.a.",
+  "meta networks inc",
+  "private layer inc",
+  "bucklog sarl",
+  "fbw reseaux fibres inc",
+  "openvpn",
+  "huawei cloud hongkong region",
+  "excitel broadband pvt ltd",
+  "vpn consumer frankfurt germany",
+  "m nets sal",
+  "hostroyale technologies pvt ltd",
+  "the constant company llc",
   "bgm",
-  "Microcom Informatique, Inc.",
-  "Contabo Inc",
-  "TELECABLE RESIDENCIAL",
-  "Network for Tor-Exit traffic.",
-  "LogicWeb Inc.",
-  "Microsoft Corp",
-  "Google LLC",
-  "Microsoft Corporation",
-  "Contabo Inc.",
-  "Unknown",
-  "Barry Hamel Equipment Ltd",
-  "Charter Communications",
-  "DLF Cable Network",
-  "Packethub S.A.",
-  "DataCamp s.r.o.",
-  "Bharti Airtel Limited",
-  "Clouvider",
-  "Facebook",
-  "Internet Archive",
-  "QuickPacket, LLC",
-  "Amazon Data Services Singapore",
-  "PJSC MTS Sverdlovsk region",
-  "HOME_DSL",
-  "Amazon Data Services NoVa",
-  "M247 LTD Berlin Infrastructure",
-  "BRETAGNE TELECOM SASU",
-  "M247 Ltd - Brazil Infrastructure",
-  "ZAP-Hosting.com - IF YOU WANT MORE POWER",
-  "ZAP-Hosting GmbH",
-  "Artic Solutions SARL",
-  "UCLOUD",
-  "Cox Communications Inc.",
-  "ONYPHE SAS",
-  "Internet Utilities Europe and Asia Limited",
-  "KYOCERA AVX Components (Dresden) GmbH",
-  "Blix Group AS",
-  "Kaopu Cloud HK Limited",
-  "Cyber Assets FZCO",
-  "Total server solutions LLC",
-  "Internet Utilities Africa (PTY) LTD",
-  "Atria Convergence Technologies Ltd.,",
-  "Linode",
-  "Bayer AG, Germany, Leverkusen",
-  "TeraGo Networks Inc.",
-  "Microsoft Corporation",
-  "Zscaler, Inc.",
-  "BT global Communications India Private Limited-Access",
-  "Not SURF Net",
-  "Nothing to hide",
-  "TOTAL PLAY TELECOMUNICACIONES SA DE CV",
-  "Driftnet Ltd",
-  "Telstra Limited",
-  "OVH US LLC",
-  "TT DOTCOM SDN BHD",
-  "OVH (NWK)",
-  "Zayo Bandwidth",
-  "Accenture LLP",
-  "Kyivstar GSM",
-  "Cascades",
-  "Microsoft Limited",
-  "Netcraft",
-  "Rockion LLC",
-  "Sudhana Telecommunications Private Limited",
-  "COMPASS COMPRESSION SERVICES LTD",
-  "DigitalOcean",
-  "Amazon Technologies Inc.",
-  "Google LLC",
-  "Datacamp Limited",
-  "Helsinki, Finland",
-  "NorthernTel Limited Partnership",
-  "China Unicom Shandong province network",
-  "CHINA UNICOM Shanghai city network",
-  "China Unicom Henan province network",
-  "KDDI CORPORATION",
-  "Reliance Jio Infocomm Limited",
-  "Linode, LLC",
-  "OVH SAS",
-  "OVH Hosting, Inc.",
-  "Hetzner Online GmbH",
-  "Alibaba",
-  "Oracle Corporation",
-  "SoftLayer Technologies",
-  "Fastly",
-  "Cloudflare",
-  "Cloudflare London, LLC",
-  "Akamai Technologies",
-  "Akamai Technologies Inc.",
-  "Hurricane Electric",
-  "Hostwinds",
-  "Choopa",
-  "Contabo GmbH",
-  "Leaseweb",
-  "Censys, Inc.",
-  "Windscribe",
-  "Hatching International B.V.",
-  "Asm Technologies",
-  "Leaseweb Deutschland GmbH",
-  "Amazon.com, Inc.",
-  "Amazon Data Services Ireland Limited",
-  "Scaleway",
-  "Vultr",
-  "Ubiquity",
+  "microcom informatique inc",
+  "contabo inc",
+  "telecable residencial",
+  "network for tor-exit traffic",
+  "logicweb inc",
+  "microsoft corp",
+  "microsoft corporation",
+  "microsoft limited",
+  "microsoft",
+  "google llc",
+  "unknown",
+  "barry hamel equipment ltd",
+  "charter communications",
+  "dlf cable network",
+  "packethub s.a.",
+  "datacamp s.r.o.",
+  "bharti airtel limited",
+  "clouvider",
+  "facebook",
+  "internet archive",
+  "quickpacket llc",
+  "amazon data services singapore",
+  "pjsc mts sverdlovsk region",
+  "home_dsl",
+  "amazon data services nova",
+  "m247 ltd berlin infrastructure",
+  "bretagne telecom sasu",
+  "m247 ltd - brazil infrastructure",
+  "zap-hosting.com - if you want more power",
+  "zap-hosting gmbh",
+  "artic solutions sarl",
+  "ucloud",
+  "cox communications inc",
+  "onyphe sas",
+  "internet utilities europe and asia limited",
+  "kyocera avx components (dresden) gmbh",
+  "blix group as",
+  "kaopu cloud hk limited",
+  "total server solutions llc",
+  "internet utilities africa (pty) ltd",
+  "atria convergence technologies ltd",
+  "linode",
+  "linode llc",
+  "bayer ag germany leverkusen",
+  "terago networks inc",
+  "zscaler inc",
+  "bt global communications india private limited-access",
+  "not surf net",
+  "nothing to hide",
+  "total play telecomunicaciones sa de cv",
+  "driftnet ltd",
+  "telstra limited",
+  "ovh us llc",
+  "tt dotcom sdn bhd",
+  "ovh (nwk)",
+  "ovh sas",
+  "ovh hosting inc",
+  "zayo bandwidth",
+  "accenture llp",
+  "kyivstar gsm",
+  "cascades",
+  "netcraft",
+  "rockion llc",
+  "sudhana telecommunications private limited",
+  "compass compression services ltd",
+  "digitalocean",
+  "amazon technologies inc",
+  "datacamp limited",
+  "helsinki finland",
+  "northerntel limited partnership",
+  "china unicom shandong province network",
+  "china unicom shanghai city network",
+  "china unicom henan province network",
+  "kddi corporation",
+  "reliance jio infocomm limited",
+  "hetzner online gmbh",
+  "alibaba",
+  "oracle corporation",
+  "softlayer technologies",
+  "fastly",
+  "cloudflare",
+  "cloudflare london llc",
+  "akamai technologies",
+  "akamai technologies inc",
+  "hurricane electric",
+  "hostwinds",
+  "choopa",
+  "contabo gmbh",
+  "leaseweb",
+  "leaseweb deutschland gmbh",
+  "censys inc",
+  "windscribe",
+  "hatching international b.v.",
+  "asm technologies",
+  "amazon.com inc",
+  "amazon data services ireland limited",
+  "scaleway",
+  "vultr",
+  "ubiquity"
 ];
 
-const TRAFFIC_THRESHOLD = 10; // Max requests in the given timeframe
-const TRAFFIC_TIMEFRAME = 30 * 1000; // 30 seconds
-const TRAFFIC_DATA = {}; // Store request timestamps by IP
+const TRAFFIC_THRESHOLD = 10;
+const TRAFFIC_TIMEFRAME = 30 * 1000;
+const TRAFFIC_DATA = {};
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -144,44 +140,46 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Step 1: Detect bots via User-Agent patterns
+    // Step 1: Bot detection via User-Agent patterns
     const botPatterns = [/bot/, /scraper/, /crawl/, /spider/, /httpclient/, /python/];
     const isBotUserAgent = botPatterns.some((pattern) =>
       pattern.test(userAgent.toLowerCase())
     );
 
-    // Step 2: Get ISP info using IPify "Country" API
-    const IPIFY_API_KEY = 'at_6Bx93cOoKa1tdYTTbcyDY1hVGNfmT'; // Replace with your own key
+    // Step 2: IPify lookup
+    const IPIFY_API_KEY = 'at_6Bx93cOoKa1tdYTTbcyDY1hVGNfmT'; // Replace with your real key
     let isp = 'Unknown';
-    let isScraperISP = false;
     let country = 'Unknown';
+    let isScraperISP = false;
 
     try {
-      const response = await axios.get(`https://geo.ipify.org/api/v2/country`, {
+      const response = await axios.get('https://geo.ipify.org/api/v2/country', {
         params: {
           apiKey: IPIFY_API_KEY,
-          ipAddress: ip
-        }
+          ipAddress: ip,
+        },
       });
 
       const data = response.data;
       isp = data.isp || 'Unknown';
       country = data.location?.country || 'Unknown';
+
+      // Normalized matching
       isScraperISP = SCRAPER_ISPS.some((knownISP) =>
-        isp.toLowerCase().includes(knownISP.toLowerCase())
+        isp.toLowerCase().includes(knownISP)
       );
-    } catch (error) {
-      console.error('IPify lookup failed:', error.message);
+    } catch (err) {
+      console.error('IPify lookup failed:', err.message);
     }
 
-    // Step 3: Check suspicious traffic patterns
+    // Step 3: Traffic abuse logic
     const now = Date.now();
     if (!TRAFFIC_DATA[ip]) TRAFFIC_DATA[ip] = [];
-    TRAFFIC_DATA[ip] = TRAFFIC_DATA[ip].filter(ts => now - ts < TRAFFIC_TIMEFRAME);
+    TRAFFIC_DATA[ip] = TRAFFIC_DATA[ip].filter((ts) => now - ts < TRAFFIC_TIMEFRAME);
     TRAFFIC_DATA[ip].push(now);
     const isSuspiciousTraffic = TRAFFIC_DATA[ip].length > TRAFFIC_THRESHOLD;
 
-    // Step 4: GeoIP as backup
+    // Step 4: Backup geo
     const geoData = geoip.lookup(ip);
     if (!country || country === 'Unknown') {
       country = geoData?.country || 'Unknown';
