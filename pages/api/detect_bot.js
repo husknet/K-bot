@@ -2,6 +2,7 @@ import axios from 'axios';
 import geoip from 'geoip-lite';
 
 const SCRAPER_ISPS = [
+  "amazon.com",
   "global secure layer",
   "rgt/smp",
   "tzulo inc",
