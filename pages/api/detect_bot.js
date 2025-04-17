@@ -3,6 +3,7 @@ import geoip from 'geoip-lite';
 
 const SCRAPER_ISPS = [
   "cogent communications, inc.",
+  "worldstream bv",
   "amazon.com",
   "global secure layer",
   "rgt/smp",
